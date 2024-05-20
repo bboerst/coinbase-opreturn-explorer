@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Core Blockchain Decoder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #000000;
+      color: #fff;
+    }
+    
+    .container {
+      max-width: 575px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #24273e;
+      border-radius: 10px;
+    }
+    
+    h1 {
+      text-align: center;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 5px;
+    }
+    
+    .block {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #4b4b4b;
+      border-radius: 5px;
+      border: 2px solid #686868;
+      position: relative;
+    }
+
+    .block h3 {
+      margin-bottom: 0px;
+      margin-top: 6px;
+    }
+
+    .blockheight {
+      font-size: x-large;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .blockheight a {
+      color: #ffffff;
+      text-decoration: none;
+    }
+    
+    #showMoreBtn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .section-container {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #e6e6e6;
+      color: #434343;
+      border-radius: 5px;
+      background-color: #fff;
+    }
+
+    .section-container a {
+      color: #5b84e6;
+      text-decoration: none;
+    }
+
+    .section-container pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+      font-family: monospace;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .hash {
+      font-family: monospace;
+    }
+
+    .help-icon {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-left: 5px;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptMCAxOC4yNWMtLjY5IDAtMS4yNS0uNTYtMS4yNS0xLjI1cy41Ni0xLjI1IDEuMjUtMS4yNWMuNjkxIDAgMS4yNS41NiAxLjI1IDEuMjVzLS41NTkgMS4yNS0xLjI1IDEuMjV6bTEuOTYxLTUuOTI4Yy0uOTA0Ljk3NS0uOTQ3IDEuNTE0LS45MzUgMi4xNzhoLTIuMDA1Yy0uMDA3LTEuNDc1LjAyLTIuMTI1IDEuNDMxLTMuNDY4LjU3My0uNTQ0IDEuMDI1LS45NzUuOTYyLTEuODIxLS4wNTgtLjgwNS0uNzMtMS4yMjYtMS4zNjUtMS4yMjYtLjcwOSAwLTEuNTM4LjUyNy0xLjUzOCAyLjAxM2gtMi4wMWMwLTIuNCAxLjQwOS0zLjk1IDMuNTktMy45NSAxLjAzNiAwIDEuOTQyLjMzOSAyLjU1Ljk1NS41Ny41NzguODY1IDEuMzcyLjg1NCAyLjI5OC0uMDE2IDEuMzgzLS44NTcgMi4yOTEtMS41MzQgMy4wMjF6Ii8+PC9zdmc+');
+      background-repeat: no-repeat;
+      background-size: cover;
+      cursor: pointer;
+    }
+
+    .pool {
+      position: absolute;
+      top: 12px;
+      right: 10px;
+      font-weight: bold;
+      font-size: xx-large;
+      color: #434343;
+      padding: 8px 14px 14px 14px;
+      border-radius: 5px 5px 0px 0px;
+      border: 1px solid #e6e6e6;
+      border-bottom: none;
+      background-color: white;
+    }
+
+    .popup {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .popup-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+      color: #333;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bitcoin Block Merged Mining</h1>
+    
+    <label for="inputString">Enter the hex string:</label>
+    <input type="text" id="inputString" placeholder="e.g., 6a2d434f524501a37cf4faa0758b26dca666f3e36d42fa15cc01064e3ecda72cb7961caa4b541b1e322bcfe0b5a030">
+    
+    <button onclick="decodeString()">Decode</button>
+    
+    <div class="result" id="result"></div>
+    
+    <h3>Recent Blocks with Merged Mining <span class="help-icon" onclick="openPopup()"></span></h3>
+    <div id="blocks"></div>
+    
+    <button id="showMoreBtn" onclick="loadMoreBlocks()">Show More</button>
+  </div>
+
+  <div id="mergedMiningPopup" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup()">&times;</span>
+      <h2>What is Merged Mining?</h2>
+      <p>Merged mining, also known as Auxiliary Proof-of-Work (AuxPoW), allows multiple cryptocurrencies to be mined simultaneously. It enables a miner to use their computational power to secure multiple blockchains without dividing their hashrate.</p>
+      <p>In merged mining, the work done on the parent blockchain (e.g., Bitcoin) is also used to validate transactions and create blocks on the auxiliary blockchain (e.g., CORE).</p>
+      <p>Merged mining is implemented by embedding metadata from the auxiliary blockchain into the coinbase transaction of the parent blockchain's blocks. This metadata typically includes block hashes and other relevant information.</p>
+    </div>
+  </div>
+  
+  <script>
+    let currentBlockIndex = 0;
+    const numBlocks = 15;
+    let totalBlocks = 0;
+    
+    function decodeString() {
+      var inputString = document.getElementById("inputString").value;
+      
+      var delegateInfo = inputString.slice(14);
+      
+      var validatorAddress = "0x" + delegateInfo.slice(0, 40);
+      var rewardAddress = "0x" + delegateInfo.slice(40);
+      
+      var output = "<strong>Validator Address:</strong><br>";
+      output += "<a href='https://stake.coredao.org/validator/" + validatorAddress + "' target='_blank'>" + validatorAddress + "</a><br><br>";
+      output += "<strong>Reward Address:</strong><br>";
+      output += "<a href='https://scan.coredao.org/address/" + rewardAddress + "' target='_blank'>" + rewardAddress + "</a>";
+      
+      document.getElementById("result").innerHTML = output;
+    }
+    
+    const loadMoreBlocks = async () => {
+      var blocksHtml = document.getElementById("blocks").innerHTML;
+      
+      var response = await fetch(`https://mempool.space/api/v1/blocks`);
+      var blocks = await response.json();
+      
+      totalBlocks = blocks.length;
+      
+      for (var i = currentBlockIndex; i < Math.min(currentBlockIndex + numBlocks, totalBlocks); i++) {
+        var block = blocks[i];
+        
+        // console.log("Block:", block);
+        
+        var poolName = block.extras.pool ? block.extras.pool.name : "Unknown";
+        
+        var coinbaseTxIdResponse = await fetch(`https://mempool.space/api/block/${block.id}/txid/0`);
+        var coinbaseTxId = await coinbaseTxIdResponse.text();
+        
+        // console.log("Coinbase transaction ID:", coinbaseTxId);
+        
+        var txResponse = await fetch(`https://mempool.space/api/tx/${coinbaseTxId}`);
+        var txData = await txResponse.json();
+        
+        console.log("Coinbase transaction data:", txData);
+        
+        var outputsHtml = "";
+        for (var j = 0; j < txData.vout.length; j++) {
+          var output = txData.vout[j];
+
+          // Core data
+          // Spec: https://github.com/coredao-org/docs/blob/main/docs/become-a-delegator/delegators/delegating-hash.md#implementation
+          if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_45 434f5245")) {
+            var opReturnData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_45 ")[1];
+            var opReturnDataAscii = hexToAscii(opReturnData);
+            var validatorAddress = "0x" + opReturnData.slice(10, 50);
+            var rewardAddress = "0x" + opReturnData.slice(50);
+
+            // console.log("CORE data:", validatorAddress, rewardAddress);
+            
+            outputsHtml += "<div class='section-container'>";
+            outputsHtml += "<h3><strong>CORE</strong><a href='https://github.com/coredao-org/docs/blob/main/docs/become-a-delegator/delegators/delegating-hash.md#implementation' target='_blank' class='help-icon'></a></h3><br>";
+            outputsHtml += "<strong>Validator Address:</strong> <div class='hash'><a href='https://stake.coredao.org/validator/" + validatorAddress + "' target='_blank'>" + validatorAddress + "</a></div><br>";
+            outputsHtml += "<strong>Reward Address:</strong> <div class='hash'><a href='https://scan.coredao.org/address/" + rewardAddress + "' target='_blank'>" + rewardAddress + "</a></div>";
+            // outputsHtml += "<pre>OP_RETURN " + opReturnDataAscii + "</pre>";
+            outputsHtml += "</div>";
+          }
+
+          // RSK data
+          // Spec: https://dev.rootstock.io/rsk/architecture/mining/implementation-guide/
+          if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_41 52534b424c4f434b3a")) {
+            var rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_41 ")[1];
+            var rskDataAscii = hexToAscii(rskData);
+            var rskBlockData = "0x" + rskData.slice(18, 82);
+
+            // console.log("RSK data:", rskBlockData);
+            
+            outputsHtml += "<div class='section-container'>";
+            outputsHtml += "<h3><strong>RSKBLOCK</strong><a href='https://dev.rootstock.io/rsk/architecture/mining/implementation-guide/' target='_blank' class='help-icon'></a></h3><br>";
+            outputsHtml += "<strong>Hash For Merged Mining:</strong> <div class='hash'>" + rskBlockData + "</div>";
+            // outputsHtml += "<pre>OP_RETURN " + rskDataAscii + "</pre>";
+            outputsHtml += "</div>";
+          }
+
+          // Vcash data
+          // Spec: 
+          if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("b9e11b6d")) {
+
+            outputsHtml += "<div class='section-container'>";
+            outputsHtml += "<strong>VCASH</strong><br>";
+            outputsHtml += "</div>";
+          }
+        }
+        
+        if (outputsHtml !== "") {
+          blocksHtml += "<div class='block'>";
+          blocksHtml += "<div class='blockheight'><a href='https://mempool.space/block/" + block.id + "' target='_blank'>" + block.height + "</a></div>";
+          blocksHtml += "<div class='pool'>" + poolName + "</div>";
+          blocksHtml += outputsHtml;
+          blocksHtml += "</div>";
+        }
+      }
+      
+      document.getElementById("blocks").innerHTML = blocksHtml;
+      currentBlockIndex += numBlocks;
+      
+      if (currentBlockIndex >= totalBlocks) {
+        document.getElementById("showMoreBtn").style.display = "none";
+      }
+    };
+
+    const hexToAscii = (hex) => {
+      var str = '';
+      for (var i = 0; i < hex.length; i += 2) {
+        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+      }
+      return str;
+    };
+
+    function openPopup() {
+      document.getElementById("mergedMiningPopup").style.display = "block";
+    }
+
+    function closePopup() {
+      document.getElementById("mergedMiningPopup").style.display = "none";
+    }
+    
+    const init = async () => {
+      await loadMoreBlocks();
+    };
+    
+    init();
+  </script>
+</body>
+</html>
