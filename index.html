@@ -74,7 +74,7 @@
     }
 
     .blockheight a {
-      color: #ffffff;
+      color: #f5f5f5;;
       text-decoration: none;
     }
     
@@ -92,7 +92,7 @@
 
     .section-container {
       margin-top: 10px;
-      padding: 10px;
+      padding: 16px;
       border: 1px solid #e6e6e6;
       color: #434343;
       border-radius: 5px;
@@ -106,7 +106,7 @@
 
     .section-container pre {
       background-color: #f4f4f4;
-      padding: 10px;
+      padding: 18px;
       border-radius: 5px;
       font-family: monospace;
       overflow-x: auto;
@@ -116,17 +116,6 @@
 
     .hash {
       font-family: monospace;
-    }
-
-    .help-icon {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      margin-left: 5px;
-      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptMCAxOC4yNWMtLjY5IDAtMS4yNS0uNTYtMS4yNS0xLjI1cy41Ni0xLjI1IDEuMjUtMS4yNWMuNjkxIDAgMS4yNS41NiAxLjI1IDEuMjVzLS41NTkgMS4yNS0xLjI1IDEuMjV6bTEuOTYxLTUuOTI4Yy0uOTA0Ljk3NS0uOTQ3IDEuNTE0LS45MzUgMi4xNzhoLTIuMDA1Yy0uMDA3LTEuNDc1LjAyLTIuMTI1IDEuNDMxLTMuNDY4LjU3My0uNTQ0IDEuMDI1LS45NzUuOTYyLTEuODIxLS4wNTgtLjgwNS0uNzMtMS4yMjYtMS4zNjUtMS4yMjYtLjcwOSAwLTEuNTM4LjUyNy0xLjUzOCAyLjAxM2gtMi4wMWMwLTIuNCAxLjQwOS0zLjk1IDMuNTktMy45NSAxLjAzNiAwIDEuOTQyLjMzOSAyLjU1Ljk1NS41Ny41NzguODY1IDEuMzcyLjg1NCAyLjI5OC0uMDE2IDEuMzgzLS44NTcgMi4yOTEtMS41MzQgMy4wMjF6Ii8+PC9zdmc+');
-      background-repeat: no-repeat;
-      background-size: cover;
-      cursor: pointer;
     }
 
     .pool {
@@ -181,23 +170,31 @@
       text-decoration: none;
       cursor: pointer;
     }
+
+    h5.whatismergedmining {
+      text-align: right;
+      cursor: pointer;
+      text-decoration: none;
+      color: #5e666f;
+      font-style: italic;
+    }
+
+    .core-logo {
+      padding-top: 4px;
+    }
+
+    .rootstock-logo {
+      padding-top: 4px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Bitcoin Block Merged Mining</h1>
+    <h1>Recent Blocks with Merged Mining</h1>
+    <h5 class="whatismergedmining" onclick="openPopup()">what is merged mining?</h5>
     
-    <label for="inputString">Enter the hex string:</label>
-    <input type="text" id="inputString" placeholder="e.g., 6a2d434f524501a37cf4faa0758b26dca666f3e36d42fa15cc01064e3ecda72cb7961caa4b541b1e322bcfe0b5a030">
-    
-    <button onclick="decodeString()">Decode</button>
-    
-    <div class="result" id="result"></div>
-    
-    <h3>Recent Blocks with Merged Mining <span class="help-icon" onclick="openPopup()"></span></h3>
     <div id="blocks"></div>
     
-    <button id="showMoreBtn" onclick="loadMoreBlocks()">Show More</button>
   </div>
 
   <div id="mergedMiningPopup" class="popup">
@@ -214,22 +211,6 @@
     let currentBlockIndex = 0;
     const numBlocks = 15;
     let totalBlocks = 0;
-    
-    function decodeString() {
-      var inputString = document.getElementById("inputString").value;
-      
-      var delegateInfo = inputString.slice(14);
-      
-      var validatorAddress = "0x" + delegateInfo.slice(0, 40);
-      var rewardAddress = "0x" + delegateInfo.slice(40);
-      
-      var output = "<strong>Validator Address:</strong><br>";
-      output += "<a href='https://stake.coredao.org/validator/" + validatorAddress + "' target='_blank'>" + validatorAddress + "</a><br><br>";
-      output += "<strong>Reward Address:</strong><br>";
-      output += "<a href='https://scan.coredao.org/address/" + rewardAddress + "' target='_blank'>" + rewardAddress + "</a>";
-      
-      document.getElementById("result").innerHTML = output;
-    }
     
     const loadMoreBlocks = async () => {
       var blocksHtml = document.getElementById("blocks").innerHTML;
@@ -254,7 +235,7 @@
         var txResponse = await fetch(`https://mempool.space/api/tx/${coinbaseTxId}`);
         var txData = await txResponse.json();
         
-        console.log("Coinbase transaction data:", txData);
+        // console.log("Coinbase transaction data:", txData);
         
         var outputsHtml = "";
         for (var j = 0; j < txData.vout.length; j++) {
@@ -271,7 +252,7 @@
             // console.log("CORE data:", validatorAddress, rewardAddress);
             
             outputsHtml += "<div class='section-container'>";
-            outputsHtml += "<h3><strong>CORE</strong><a href='https://github.com/coredao-org/docs/blob/main/docs/become-a-delegator/delegators/delegating-hash.md#implementation' target='_blank' class='help-icon'></a></h3><br>";
+            outputsHtml += "<div class='core-logo'><a href='https://stake.coredao.org/' target='_blank'><img src='https://coredao.org/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flight.2e337d5a.png&w=384&q=75' height='30'></a></div><br>";
             outputsHtml += "<strong>Validator Address:</strong> <div class='hash'><a href='https://stake.coredao.org/validator/" + validatorAddress + "' target='_blank'>" + validatorAddress + "</a></div><br>";
             outputsHtml += "<strong>Reward Address:</strong> <div class='hash'><a href='https://scan.coredao.org/address/" + rewardAddress + "' target='_blank'>" + rewardAddress + "</a></div>";
             // outputsHtml += "<pre>OP_RETURN " + opReturnDataAscii + "</pre>";
@@ -288,7 +269,7 @@
             // console.log("RSK data:", rskBlockData);
             
             outputsHtml += "<div class='section-container'>";
-            outputsHtml += "<h3><strong>RSKBLOCK</strong><a href='https://dev.rootstock.io/rsk/architecture/mining/implementation-guide/' target='_blank' class='help-icon'></a></h3><br>";
+            outputsHtml += "<div class='rootstock-logo'><a href='https://explorer.rootstock.io/' target='_blank'><img src='https://rootstock.blockscout.com/assets/network_logo.svg' height='23'></a></div><br>";
             outputsHtml += "<strong>Hash For Merged Mining:</strong> <div class='hash'>" + rskBlockData + "</div>";
             // outputsHtml += "<pre>OP_RETURN " + rskDataAscii + "</pre>";
             outputsHtml += "</div>";
@@ -315,10 +296,6 @@
       
       document.getElementById("blocks").innerHTML = blocksHtml;
       currentBlockIndex += numBlocks;
-      
-      if (currentBlockIndex >= totalBlocks) {
-        document.getElementById("showMoreBtn").style.display = "none";
-      }
     };
 
     const hexToAscii = (hex) => {
