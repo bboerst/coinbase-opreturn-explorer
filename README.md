@@ -21,9 +21,11 @@ These _look_ like a bunch of gibberish because it's typical in block explorers t
 
 Go back to the mempool.space coinbase transaction page from above and click the "Details" button. Find the same 3 `OP_RETURN` outputs on the right and look at the `ScriptPubKey (HEX)` field. This is the actual script that the miner adds to the transaction that contains the data and this is what we decode in this project.
 
-Here are the the decoded `OP_RETURN`s from the above transaction. Notice that `OP_RETURN` #1 contains the merkle root of some transaction witness data. `OP_RETURN` #2 is for merged mining with coredao.org and we're able to decode the details and see which validator they are staking with as well as the rewards address. `OP_RETURN` #3 is for merged mining with rootstock.io and the associated "Merged Mining" hash:
+Here are the the decoded `OP_RETURN`s from the above transaction.
 
 <img width="412" alt="image" src="https://github.com/bboerst/coinbase-opreturn-explorer/assets/1393271/abf9bfd3-440d-4d2e-8465-e0e1c4a3d35a">
+
+Notice that `OP_RETURN` #1 contains the merkle root of some transaction witness data. `OP_RETURN` #2 is for merged mining with coredao.org and we're able to decode the details and see which validator they are staking with as well as the rewards address. `OP_RETURN` #3 is for merged mining with rootstock.io and the data includes the associated "Merged Mining" hash, which can be cross-referenced in the https://explorer.rootstock.io/ block explorer.
 
 **Check out specific implementations details below to see how each of these are decoded.**
 
