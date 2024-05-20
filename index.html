@@ -112,6 +112,7 @@
       color: #434343;
       border-radius: 5px;
       background-color: #fff;
+      position: relative;
     }
 
     .section-container a {
@@ -119,7 +120,7 @@
       text-decoration: none;
     }
 
-    .section-container pre {
+    .asciidata {
       background-color: #f4f4f4;
       padding: 18px;
       border-radius: 5px;
@@ -138,13 +139,7 @@
       top: 12px;
       right: 10px;
       font-weight: bold;
-      font-size: xx-large;
-      color: #434343;
-      padding: 8px 14px 14px 14px;
-      border-radius: 5px 5px 0px 0px;
-      border: 1px solid #e6e6e6;
-      border-bottom: none;
-      background-color: white;
+      font-size: x-large;
     }
 
     .popup {
@@ -200,6 +195,17 @@
 
     .rootstock-logo {
       padding-top: 4px;
+    }
+
+    .type-tag {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 5px 10px;
+      background-color: #f5f5f5;
+      color: #333;
+      border-radius: 5px;
+      font-size: 12px;
     }
   </style>
 </head>
@@ -261,7 +267,7 @@
         for (var j = 0; j < txData.vout.length; j++) {
           var output = txData.vout[j];
 
-          // Core data
+          // Core data - merged mining
           // Spec: https://github.com/coredao-org/docs/blob/main/docs/become-a-delegator/delegators/delegating-hash.md#implementation
           if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_45 434f5245")) {
             var opReturnData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_45 ")[1];
@@ -275,11 +281,12 @@
             outputsHtml += "<div class='core-logo'><a href='https://stake.coredao.org/' target='_blank'><img src='https://coredao.org/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flight.2e337d5a.png&w=384&q=75' height='30'></a></div><br>";
             outputsHtml += "<strong>Validator Address:</strong> <div class='hash'><a href='https://stake.coredao.org/validator/" + validatorAddress + "' target='_blank'>" + validatorAddress + "</a></div><br>";
             outputsHtml += "<strong>Reward Address:</strong> <div class='hash'><a href='https://scan.coredao.org/address/" + rewardAddress + "' target='_blank'>" + rewardAddress + "</a></div>";
-            // outputsHtml += "<pre>OP_RETURN " + opReturnDataAscii + "</pre>";
+            // outputsHtml += "<div class='asciidata'>OP_RETURN " + opReturnDataAscii + "</div>";
+            outputsHtml += "<div class='type-tag'>merged mining</div>";
             outputsHtml += "</div>";
           }
 
-          // RSK data
+          // RSK data - merged mining
           // Spec: https://dev.rootstock.io/rsk/architecture/mining/implementation-guide/
           if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_41 52534b424c4f434b3a")) {
             var rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_41 ")[1];
@@ -291,7 +298,8 @@
             outputsHtml += "<div class='section-container'>";
             outputsHtml += "<div class='rootstock-logo'><a href='https://explorer.rootstock.io/' target='_blank'><img src='https://rootstock.blockscout.com/assets/network_logo.svg' height='23'></a></div><br>";
             outputsHtml += "<strong>Hash For Merged Mining:</strong> <div class='hash'>" + rskBlockData + "</div>";
-            // outputsHtml += "<pre>OP_RETURN " + rskDataAscii + "</pre>";
+            // outputsHtml += "<div class='asciidata'>OP_RETURN " + rskDataAscii + "</div>";
+            outputsHtml += "<div class='type-tag'>merged mining</div>";
             outputsHtml += "</div>";
           }
 
