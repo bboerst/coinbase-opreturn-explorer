@@ -1,5 +1,7 @@
 # Merged Mining Block Explorer
 
+View this at: https://bboerst.github.io/merged-mining-explorer/
+
 The goal of this project is to decode and display `OP_RETURN` data related to merged mining.
 
 Currently being tracked:
