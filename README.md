@@ -20,3 +20,11 @@ If anyone can explain this, please open a PR with details.
 
 ### Summary
 If anyone can explain this, please open a PR with details.
+
+## Witness data
+- Spec: https://github.com/bitcoinjs/bitcoinjs-lib/blob/master/ts_src/block.ts#L106-L109
+
+### Summary
+The merkle root for the witness data is in an OP_RETURN output.
+
+https://github.com/bitcoinjs/bitcoinjs-lib/blob/master/ts_src/block.ts#L106-L109

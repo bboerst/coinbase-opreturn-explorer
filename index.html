@@ -173,9 +173,13 @@
       padding-top: 4px;
     }
 
-    .type-tag {
+    .nologo {
+      padding-top: 4px;
+      font-weight: bold;
+    }
+
+    .tag {
       position: absolute;
-      top: 10px;
       right: 10px;
       padding: 5px 10px;
       background-color: #f5f5f5;
@@ -183,6 +187,14 @@
       border-radius: 5px;
       font-size: 12px;
       cursor: pointer;
+    }
+
+    .tag.type {
+      top: 10px;
+    }
+
+    .tag.opreturnindex {
+      top: 38px;
     }
 
     .help-icon {
@@ -216,6 +228,14 @@
       <p>Merged mining, also known as Auxiliary Proof-of-Work (AuxPoW), allows multiple cryptocurrencies to be mined simultaneously. It enables a miner to use their computational power to secure multiple blockchains without dividing their hashrate.</p>
       <p>In merged mining, the work done on the parent blockchain (e.g., Bitcoin) is also used to validate transactions and create blocks on the auxiliary blockchain (e.g., CORE).</p>
       <p>Merged mining is implemented by embedding metadata from the auxiliary blockchain into the coinbase transaction of the parent blockchain's blocks. This metadata typically includes block hashes and other relevant information.</p>
+    </div>
+  </div>
+
+  <div id="witnessPopup" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="closeWitnessPopup()">&times;</span>
+      <h2>What is the Witness OP_RETURN?</h2>
+      <p>The merkle root for the witness data is in an OP_RETURN output.</p>
     </div>
   </div>
   
@@ -287,7 +307,8 @@
             outputsHtml += "<div class='core-logo'><a href='https://stake.coredao.org/' target='_blank'><img src='https://coredao.org/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flight.2e337d5a.png&w=384&q=75' height='30'></a></div><br>";
             outputsHtml += "<strong>Validator Address:</strong> <div class='hash'><a href='https://stake.coredao.org/validator/" + validatorAddress + "' target='_blank'>" + validatorAddress + "</a></div><br>";
             outputsHtml += "<strong>Reward Address:</strong> <div class='hash'><a href='https://scan.coredao.org/address/" + rewardAddress + "' target='_blank'>" + rewardAddress + "</a></div>";
-            outputsHtml += "<div class='type-tag' onclick='openMergedMiningPopup()'>merged mining <div class='help-icon'></div></div>";
+            outputsHtml += "<div class='tag type' onclick='openMergedMiningPopup()'>merged mining <div class='help-icon'></div></div>";
+            // outputsHtml += "<div class='tag opreturnindex'>OP_RETURN " + j + "</div>";
             outputsHtml += "</div>";
           }
 
@@ -299,7 +320,21 @@
             outputsHtml += "<div class='section-container'>";
             outputsHtml += "<div class='rootstock-logo'><a href='https://explorer.rootstock.io/' target='_blank'><img src='https://rootstock.blockscout.com/assets/network_logo.svg' height='23'></a></div><br>";
             outputsHtml += "<strong>Hash For Merged Mining:</strong> <div class='hash'>" + rskBlockData + "</div>";
-            outputsHtml += "<div class='type-tag' onclick='openMergedMiningPopup()'>merged mining <div class='help-icon'></div></div>";
+            outputsHtml += "<div class='tag type' onclick='openMergedMiningPopup()'>merged mining <div class='help-icon'></div></div>";
+            // outputsHtml += "<div class='tag opreturnindex'>OP_RETURN " + j + "</div>";
+            outputsHtml += "</div>";
+          }
+
+          // Witness data
+          if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_36 aa21a9ed")) {
+            var witnessData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_36 ")[1];
+            var witnessBlockData = witnessData.slice(8, 72);
+            
+            outputsHtml += "<div class='section-container'>";
+            outputsHtml += "<div class='nologo'>Witness data</div><br>";
+            outputsHtml += "<strong>Merkle root:</strong> <div class='hash'>" + witnessBlockData + "</div>";
+            outputsHtml += "<div class='tag type' onclick='openWitnessPopup()'>witness <div class='help-icon'></div></div>";
+            // outputsHtml += "<div class='tag opreturnindex'>OP_RETURN " + j + "</div>";
             outputsHtml += "</div>";
           }
 
@@ -351,6 +386,14 @@
 
     function closeMergedMiningPopup() {
       document.getElementById("mergedMiningPopup").style.display = "none";
+    }
+
+    function openWitnessPopup() {
+      document.getElementById("witnessPopup").style.display = "block";
+    }
+
+    function closeWitnessPopup() {
+      document.getElementById("witnessPopup").style.display = "none";
     }
     
     init();
