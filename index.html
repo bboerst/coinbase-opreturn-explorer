@@ -11,12 +11,11 @@
     }
     
     .container {
-      max-width: 575px;
       margin: 0 auto;
       padding: 20px;
       background-color: #24273e;
       border-radius: 10px;
-      position: relative;
+      width: fit-content;
     }
 
     .github-logo {
@@ -206,6 +205,18 @@
       color: #333;
       border-radius: 5px;
       font-size: 12px;
+      cursor: pointer;
+    }
+
+    .help-icon {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-left: 5px;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptMCAxOC4yNWMtLjY5IDAtMS4yNS0uNTYtMS4yNS0xLjI1cy41Ni0xLjI1IDEuMjUtMS4yNWMuNjkxIDAgMS4yNS41NiAxLjI1IDEuMjVzLS41NTkgMS4yNS0xLjI1IDEuMjV6bTEuOTYxLTUuOTI4Yy0uOTA0Ljk3NS0uOTQ3IDEuNTE0LS45MzUgMi4xNzhoLTIuMDA1Yy0uMDA3LTEuNDc1LjAyLTIuMTI1IDEuNDMxLTMuNDY4LjU3My0uNTQ0IDEuMDI1LS45NzUuOTYyLTEuODIxLS4wNTgtLjgwNS0uNzMtMS4yMjYtMS4zNjUtMS4yMjYtLjcwOSAwLTEuNTM4LjUyNy0xLjUzOCAyLjAxM2gtMi4wMWMwLTIuNCAxLjQwOS0zLjk1IDMuNTktMy45NSAxLjAzNiAwIDEuOTQyLjMzOSAyLjU1Ljk1NS41Ny41NzguODY1IDEuMzcyLjg1NCAyLjI5OC0uMDE2IDEuMzgzLS44NTcgMi4yOTEtMS41MzQgMy4wMjF6Ii8+PC9zdmc+');
+      background-repeat: no-repeat;
+      background-size: cover;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -217,7 +228,6 @@
       </a>
     </div>
     <h1>Recent Blocks with Merged Mining</h1>
-    <h5 class="whatismergedmining" onclick="openPopup()">what is merged mining?</h5>
     
     <div id="blocks"></div>
     
@@ -225,7 +235,7 @@
 
   <div id="mergedMiningPopup" class="popup">
     <div class="popup-content">
-      <span class="close" onclick="closePopup()">&times;</span>
+      <span class="close" onclick="closeMergedMiningPopup()">&times;</span>
       <h2>What is Merged Mining?</h2>
       <p>Merged mining, also known as Auxiliary Proof-of-Work (AuxPoW), allows multiple cryptocurrencies to be mined simultaneously. It enables a miner to use their computational power to secure multiple blockchains without dividing their hashrate.</p>
       <p>In merged mining, the work done on the parent blockchain (e.g., Bitcoin) is also used to validate transactions and create blocks on the auxiliary blockchain (e.g., CORE).</p>
@@ -282,7 +292,7 @@
             outputsHtml += "<strong>Validator Address:</strong> <div class='hash'><a href='https://stake.coredao.org/validator/" + validatorAddress + "' target='_blank'>" + validatorAddress + "</a></div><br>";
             outputsHtml += "<strong>Reward Address:</strong> <div class='hash'><a href='https://scan.coredao.org/address/" + rewardAddress + "' target='_blank'>" + rewardAddress + "</a></div>";
             // outputsHtml += "<div class='asciidata'>OP_RETURN " + opReturnDataAscii + "</div>";
-            outputsHtml += "<div class='type-tag'>merged mining</div>";
+            outputsHtml += "<div class='type-tag' onclick='openMergedMiningPopup()'>merged mining <div class='help-icon'></div></div>";
             outputsHtml += "</div>";
           }
 
@@ -299,7 +309,7 @@
             outputsHtml += "<div class='rootstock-logo'><a href='https://explorer.rootstock.io/' target='_blank'><img src='https://rootstock.blockscout.com/assets/network_logo.svg' height='23'></a></div><br>";
             outputsHtml += "<strong>Hash For Merged Mining:</strong> <div class='hash'>" + rskBlockData + "</div>";
             // outputsHtml += "<div class='asciidata'>OP_RETURN " + rskDataAscii + "</div>";
-            outputsHtml += "<div class='type-tag'>merged mining</div>";
+            outputsHtml += "<div class='type-tag' onclick='openMergedMiningPopup()'>merged mining <div class='help-icon'></div></div>";
             outputsHtml += "</div>";
           }
 
@@ -334,11 +344,11 @@
       return str;
     };
 
-    function openPopup() {
+    function openMergedMiningPopup() {
       document.getElementById("mergedMiningPopup").style.display = "block";
     }
 
-    function closePopup() {
+    function closeMergedMiningPopup() {
       document.getElementById("mergedMiningPopup").style.display = "none";
     }
     
