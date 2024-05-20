@@ -31,7 +31,7 @@ Notice that `OP_RETURN` #1 contains the merkle root of some transaction witness 
 
 ## Implementation Details
 
-### `CORE`
+### Core
 - Link: https://coredao.org/
 - Spec: https://github.com/coredao-org/docs/blob/main/docs/become-a-delegator/delegators/delegating-hash.md#implementation
 
@@ -39,9 +39,17 @@ Notice that `OP_RETURN` #1 contains the merkle root of some transaction witness 
 If anyone can explain this, please open a PR with details.
 
 ---
-### `RSKBLOCK`
+### Rootstock
 - Link: https://rootstock.io/
 - Spec: https://dev.rootstock.io/rsk/architecture/mining/implementation-guide/
+
+#### Summary
+If anyone can explain this, please open a PR with details.
+
+---
+### HathorNetwork
+- Link: https://hathor.network/
+- Spec: https://github.com/HathorNetwork/rfcs/blob/master/text/0006-merged-mining-with-bitcoin.md
 
 #### Summary
 If anyone can explain this, please open a PR with details.

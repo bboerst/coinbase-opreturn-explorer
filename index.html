@@ -104,7 +104,7 @@
       text-decoration: none;
     }
 
-    .asciidata {
+    .data {
       background-color: #4b4b4b;
       padding: 18px;
       border-radius: 5px;
@@ -114,7 +114,7 @@
       word-wrap: break-word;
     }
 
-    h1 div.asciidata {
+    h1 div.data {
       text-align: center;
     }
 
@@ -185,6 +185,16 @@
       padding-top: 4px;
     }
 
+    .hathor-logo {
+      background: black;
+      width: 90px;
+      padding: 8px 5px 5px 5px;
+    }
+
+    .segwit-logo {
+      padding-top: 4px;
+    }
+
     .nologo {
       padding-top: 4px;
       font-weight: bold;
@@ -229,7 +239,7 @@
         <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo">
       </a>
     </div>
-    <h1><div class='asciidata'>coinbase OP_RETURNs (decoded)</div></h1>
+    <h1><div class='data'>coinbase OP_RETURNs (decoded)</div></h1>
     <p class="whatisthis"><a href='https://github.com/bboerst/coinbase-opreturn-explorer/blob/main/README.md' target="_blank">what is this?</a></p>
     <div id="blocks"></div>
   </div>
@@ -281,17 +291,6 @@
       currentBlockIndex -= newBlocks.length;
     };
 
-    const loadPreviousBlocks = async () => {
-      currentBlockIndex = Math.max(0, currentBlockIndex - numBlocks * 2);
-      var response = await fetch(`https://mempool.space/api/v1/blocks/${currentBlockIndex}`);
-      var blocks = await response.json();
-      
-      var blocksHtml = await renderBlocks(blocks);
-      
-      document.getElementById("blocks").innerHTML = blocksHtml;
-      updatePaginationLinks();
-    };
-
     const renderBlocks = async (blocks) => {
       var blocksHtml = "";
       
@@ -310,52 +309,89 @@
         for (var j = 0; j < txData.vout.length; j++) {
           var output = txData.vout[j];
 
-          // Core data - merged mining
-          if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_45 434f5245")) {
-            var opReturnData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_45 ")[1];
-            var validatorAddress = "0x" + opReturnData.slice(10, 50);
-            var rewardAddress = "0x" + opReturnData.slice(50);
-            
-            outputsHtml += "<div class='section-container'>";
-            outputsHtml += "<div class='core-logo'><a href='https://stake.coredao.org/' target='_blank'><img src='https://coredao.org/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flight.2e337d5a.png&w=384&q=75' height='30'></a></div><br>";
-            outputsHtml += "<strong>Validator Address:</strong> <div class='hash'><a href='https://stake.coredao.org/validator/" + validatorAddress + "' target='_blank'>" + validatorAddress + "</a></div><br>";
-            outputsHtml += "<strong>Reward Address:</strong> <div class='hash'><a href='https://scan.coredao.org/address/" + rewardAddress + "' target='_blank'>" + rewardAddress + "</a></div>";
-            outputsHtml += "<div class='tag type' onclick='openMergedMiningPopup()'>merged mining <div class='help-icon'></div></div>";
-            // outputsHtml += "<div class='tag opreturnindex'>OP_RETURN " + j + "</div>";
-            outputsHtml += "</div>";
-          }
+          if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("OP_RETURN")) {
 
-          // RSK data - merged mining
-          if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_41 52534b424c4f434b3a")) {
-            var rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_41 ")[1];
-            var rskBlockData = "0x" + rskData.slice(18, 82);
-            
-            outputsHtml += "<div class='section-container'>";
-            outputsHtml += "<div class='rootstock-logo'><a href='https://explorer.rootstock.io/' target='_blank'><img src='https://rootstock.blockscout.com/assets/network_logo.svg' height='23'></a></div><br>";
-            outputsHtml += "<strong>Hash For Merged Mining:</strong> <div class='hash'>" + rskBlockData + "</div>";
-            outputsHtml += "<div class='tag type' onclick='openMergedMiningPopup()'>merged mining <div class='help-icon'></div></div>";
-            // outputsHtml += "<div class='tag opreturnindex'>OP_RETURN " + j + "</div>";
-            outputsHtml += "</div>";
-          }
+            switch (true) {
 
-          // Witness data
-          if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_36 aa21a9ed")) {
-            var witnessData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_36 ")[1];
-            var witnessBlockData = witnessData.slice(8, 72);
-            
-            outputsHtml += "<div class='section-container'>";
-            outputsHtml += "<div class='nologo'>Witness data</div><br>";
-            outputsHtml += "<strong>Witness data merkle root:</strong> <div class='hash'>" + witnessBlockData + "</div>";
-            outputsHtml += "<div class='tag type' onclick='openWitnessPopup()'>witness <div class='help-icon'></div></div>";
-            // outputsHtml += "<div class='tag opreturnindex'>OP_RETURN " + j + "</div>";
-            outputsHtml += "</div>";
-          }
+              // Core data - merged mining
+              case output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_45 434f5245"):
+                var opReturnData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_45 ")[1];
+                var validatorAddress = "0x" + opReturnData.slice(10, 50);
+                var rewardAddress = "0x" + opReturnData.slice(50);
+                
+                outputsHtml += "<div class='section-container'>";
+                outputsHtml += "<div class='core-logo'><a href='https://stake.coredao.org/' target='_blank'><img src='https://coredao.org/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flight.2e337d5a.png&w=384&q=75' height='30'></a></div><br>";
+                outputsHtml += "<strong>Validator Address:</strong> <div class='hash'><a href='https://stake.coredao.org/validator/" + validatorAddress + "' target='_blank'>" + validatorAddress + "</a></div><br>";
+                outputsHtml += "<strong>Reward Address:</strong> <div class='hash'><a href='https://scan.coredao.org/address/" + rewardAddress + "' target='_blank'>" + rewardAddress + "</a></div>";
+                outputsHtml += "<div class='tag type' onclick='openMergedMiningPopup()'>merged mining <div class='help-icon'></div></div>";
+                // outputsHtml += "<div class='tag opreturnindex'>OP_RETURN " + j + "</div>";
+                outputsHtml += "</div>";
+                break;
+              
+              // RSK data - merged mining
+              case output.scriptpubkey_asm.includes("52534b424c4f434b3a"):
+                if (output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_41 52534b424c4f434b3a")) {
+                  var rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_41 ")[1];
+                } else if (output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_1 52534b424c4f434b3a")) {
+                  var rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_1 ")[1];
+                } else if (output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHDATA41 52534b424c4f434b3a")) {
+                  var rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHDATA41 ")[1];
+                } else if (output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHDATA1 52534b424c4f434b3a")) {
+                  var rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHDATA1 ")[1];
+                } else {
+                  var rskData = output.scriptpubkey_asm;
+                }
 
-          // Vcash data
-          if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("b9e11b6d")) {
-            outputsHtml += "<div class='section-container'>";
-            outputsHtml += "<strong>VCASH</strong><br>";
-            outputsHtml += "</div>";
+                var rskBlockData = "0x" + rskData.slice(18, 82);
+                
+                outputsHtml += "<div class='section-container'>";
+                outputsHtml += "<div class='rootstock-logo'><a href='https://explorer.rootstock.io/' target='_blank'><img src='https://rootstock.blockscout.com/assets/network_logo.svg' height='23'></a></div><br>";
+                outputsHtml += "<strong>Hash For Merged Mining:</strong> <div class='hash'>" + rskBlockData + "</div>";
+                outputsHtml += "<div class='tag type' onclick='openMergedMiningPopup()'>merged mining <div class='help-icon'></div></div>";
+                // outputsHtml += "<div class='tag opreturnindex'>OP_RETURN " + j + "</div>";
+                outputsHtml += "</div>";
+                break;
+
+              // Witness data
+              case output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_36 aa21a9ed"):
+                var witnessData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_36 ")[1];
+                var witnessBlockData = witnessData.slice(8, 72);
+                
+                outputsHtml += "<div class='section-container'>";
+                outputsHtml += "<div class='segwit-logo'><img src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Segwit.svg/320px-Segwit.svg.png' height='30'></div><br>";
+                outputsHtml += "<strong>Witness data merkle root:</strong> <div class='hash'>" + witnessBlockData + "</div>";
+                outputsHtml += "<div class='tag type' onclick='openWitnessPopup()'>witness <div class='help-icon'></div></div>";
+                // outputsHtml += "<div class='tag opreturnindex'>OP_RETURN " + j + "</div>";
+                outputsHtml += "</div>";
+                break;
+
+              // HathorNetwork
+              case output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_36 48617468"):
+                var hathorData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_36 ")[1];
+                var hathorBlockData = hathorData.slice(8, 72);
+                
+                outputsHtml += "<div class='section-container'>";
+                outputsHtml += "<div class='hathor-logo'><a href='https://hathor.network/' target='_blank'><img src='https://hathor.network/wp-content/uploads/2023/04/Vector-24.svg' height='20'></a></div><br>";
+                outputsHtml += "<strong>Aux block hash:</strong> <div class='hash'>" + hathorBlockData + "</div>";
+                outputsHtml += "<div class='tag type' onclick='openMergedMiningPopup()'>merged mining <div class='help-icon'></div></div>";
+                // outputsHtml += "<div class='tag opreturnindex'>OP_RETURN " + j + "</div>";
+                outputsHtml += "</div>";
+                break;
+
+              case output.scriptpubkey_asm.includes("b9e11b6d"):
+                outputsHtml += "<div class='section-container'>";
+                outputsHtml += "<strong>VCASH</strong><br>";
+                outputsHtml += "</div>";
+                break;
+
+              default:
+                outputsHtml += "<div class='section-container'>";
+                outputsHtml += "<strong>UNKNOWN OP_RETURN</strong><br>";
+                outputsHtml += "<strong>ScriptPubKey (HEX):</strong> <div class='hash'>" + output.scriptpubkey + "</div>";
+                outputsHtml += "</div>";
+
+            }
+
           }
         }
         
