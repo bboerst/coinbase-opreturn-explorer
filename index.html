@@ -324,11 +324,11 @@
     };
 
     const isScrolledToBottom = () => {
-      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-      const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
-      const clientHeight = document.documentElement.clientHeight || window.innerHeight;
-      
-      return scrollTop + clientHeight >= scrollHeight;
+      const scrollTop = window.scrollY;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = window.innerHeight;
+
+      return scrollTop + clientHeight >= scrollHeight - 1;
     };
 
     window.onscroll = async () => {
