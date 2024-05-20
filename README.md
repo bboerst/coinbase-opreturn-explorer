@@ -23,6 +23,8 @@ Go back to the mempool.space coinbase transaction page from above and click the 
 
 Here are the the decoded `OP_RETURN`s from the above transaction. Notice that `OP_RETURN` #1 contains the merkle root of some transaction witness data. `OP_RETURN` #2 is for merged mining with coredao.org and we're able to decode the details and see which validator they are staking with as well as the rewards address. `OP_RETURN` #3 is for merged mining with rootstock.io and the associated "Merged Mining" hash:
 
+<img width="412" alt="image" src="https://github.com/bboerst/coinbase-opreturn-explorer/assets/1393271/abf9bfd3-440d-4d2e-8465-e0e1c4a3d35a">
+
 **Check out specific implementations details below to see how each of these are decoded.**
 
 ## Implementation Details
