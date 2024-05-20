@@ -16,6 +16,21 @@
       padding: 20px;
       background-color: #24273e;
       border-radius: 10px;
+      position: relative;
+    }
+
+    .github-logo {
+      position: absolute;
+      top: 19px;
+      right: -54px;
+      background-color: #fff;
+      padding: 10px 15px;
+      border-radius: 0px 5px 5px 0px;
+    }
+
+    .github-logo img {
+      width: 24px;
+      height: 24px;
     }
     
     h1 {
@@ -190,6 +205,11 @@
 </head>
 <body>
   <div class="container">
+    <div class="github-logo">
+      <a href="https://github.com/bboerst/merged-mining-explorer" target="_blank">
+        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo">
+      </a>
+    </div>
     <h1>Recent Blocks with Merged Mining</h1>
     <h5 class="whatismergedmining" onclick="openPopup()">what is merged mining?</h5>
     
