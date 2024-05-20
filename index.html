@@ -32,10 +32,6 @@
       height: 24px;
     }
     
-    h1 {
-      text-align: center;
-    }
-    
     label {
       display: block;
       margin-bottom: 10px;
@@ -91,17 +87,25 @@
       color: #f5f5f5;;
       text-decoration: none;
     }
-    
-    #showMoreBtn {
-      display: block;
-      width: 100%;
-      padding: 10px;
+
+    .pagination {
+      display: flex;
+      justify-content: space-between;
       margin-top: 20px;
+    }
+
+    .pagination a {
+      display: inline-block;
+      padding: 10px;
       background-color: #2196F3;
       color: white;
-      border: none;
+      text-decoration: none;
       border-radius: 5px;
       cursor: pointer;
+    }
+
+    .pagination a:hover {
+      background-color: #1976D2;
     }
 
     .section-container {
@@ -120,13 +124,17 @@
     }
 
     .asciidata {
-      background-color: #f4f4f4;
+      background-color: #4b4b4b;
       padding: 18px;
       border-radius: 5px;
       font-family: monospace;
       overflow-x: auto;
       white-space: pre-wrap;
       word-wrap: break-word;
+    }
+
+    h1 div.asciidata {
+      text-align: center;
     }
 
     .hash {
@@ -227,10 +235,10 @@
         <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo">
       </a>
     </div>
-    <h1>Recent Blocks with Merged Mining</h1>
+    <h1><div class='asciidata'>coinbase OP_RETURNs decoded</div></h1>
     
     <div id="blocks"></div>
-    
+
   </div>
 
   <div id="mergedMiningPopup" class="popup">
@@ -245,78 +253,90 @@
   
   <script>
     let currentBlockIndex = 0;
-    const numBlocks = 15;
-    let totalBlocks = 0;
+
+    var init = async () => {
+      var tipResponse = await fetch("https://mempool.space/api/blocks/tip/height");
+      var tipHeight = await tipResponse.text();
+      currentBlockIndex = parseInt(tipHeight);
+      
+      await loadMoreBlocks();
+    };
     
     const loadMoreBlocks = async () => {
-      var blocksHtml = document.getElementById("blocks").innerHTML;
+      const blocks = document.querySelectorAll(".block");
+      const lastBlock = blocks[blocks.length - 1];
       
-      var response = await fetch(`https://mempool.space/api/v1/blocks`);
+      if (lastBlock) {
+        const lastBlockHeight = parseInt(lastBlock.querySelector(".blockheight a").textContent);
+        currentBlockIndex = lastBlockHeight - 1;
+      }
+      
+      var response = await fetch(`https://mempool.space/api/v1/blocks/${currentBlockIndex}`);
+      var newBlocks = await response.json();
+      
+      var blocksHtml = await renderBlocks(newBlocks);
+      
+      document.getElementById("blocks").innerHTML += blocksHtml;
+      currentBlockIndex -= newBlocks.length;
+    };
+
+    const loadPreviousBlocks = async () => {
+      currentBlockIndex = Math.max(0, currentBlockIndex - numBlocks * 2);
+      var response = await fetch(`https://mempool.space/api/v1/blocks/${currentBlockIndex}`);
       var blocks = await response.json();
       
-      totalBlocks = blocks.length;
+      var blocksHtml = await renderBlocks(blocks);
       
-      for (var i = currentBlockIndex; i < Math.min(currentBlockIndex + numBlocks, totalBlocks); i++) {
+      document.getElementById("blocks").innerHTML = blocksHtml;
+      updatePaginationLinks();
+    };
+
+    const renderBlocks = async (blocks) => {
+      var blocksHtml = "";
+      
+      for (var i = 0; i < blocks.length; i++) {
         var block = blocks[i];
-        
-        // console.log("Block:", block);
         
         var poolName = block.extras.pool ? block.extras.pool.name : "Unknown";
         
         var coinbaseTxIdResponse = await fetch(`https://mempool.space/api/block/${block.id}/txid/0`);
         var coinbaseTxId = await coinbaseTxIdResponse.text();
         
-        // console.log("Coinbase transaction ID:", coinbaseTxId);
-        
         var txResponse = await fetch(`https://mempool.space/api/tx/${coinbaseTxId}`);
         var txData = await txResponse.json();
-        
-        // console.log("Coinbase transaction data:", txData);
         
         var outputsHtml = "";
         for (var j = 0; j < txData.vout.length; j++) {
           var output = txData.vout[j];
 
           // Core data - merged mining
-          // Spec: https://github.com/coredao-org/docs/blob/main/docs/become-a-delegator/delegators/delegating-hash.md#implementation
           if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_45 434f5245")) {
             var opReturnData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_45 ")[1];
-            var opReturnDataAscii = hexToAscii(opReturnData);
             var validatorAddress = "0x" + opReturnData.slice(10, 50);
             var rewardAddress = "0x" + opReturnData.slice(50);
-
-            // console.log("CORE data:", validatorAddress, rewardAddress);
             
             outputsHtml += "<div class='section-container'>";
             outputsHtml += "<div class='core-logo'><a href='https://stake.coredao.org/' target='_blank'><img src='https://coredao.org/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flight.2e337d5a.png&w=384&q=75' height='30'></a></div><br>";
             outputsHtml += "<strong>Validator Address:</strong> <div class='hash'><a href='https://stake.coredao.org/validator/" + validatorAddress + "' target='_blank'>" + validatorAddress + "</a></div><br>";
             outputsHtml += "<strong>Reward Address:</strong> <div class='hash'><a href='https://scan.coredao.org/address/" + rewardAddress + "' target='_blank'>" + rewardAddress + "</a></div>";
-            // outputsHtml += "<div class='asciidata'>OP_RETURN " + opReturnDataAscii + "</div>";
             outputsHtml += "<div class='type-tag' onclick='openMergedMiningPopup()'>merged mining <div class='help-icon'></div></div>";
             outputsHtml += "</div>";
           }
 
           // RSK data - merged mining
-          // Spec: https://dev.rootstock.io/rsk/architecture/mining/implementation-guide/
           if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_41 52534b424c4f434b3a")) {
             var rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_41 ")[1];
-            var rskDataAscii = hexToAscii(rskData);
             var rskBlockData = "0x" + rskData.slice(18, 82);
-
-            // console.log("RSK data:", rskBlockData);
             
             outputsHtml += "<div class='section-container'>";
             outputsHtml += "<div class='rootstock-logo'><a href='https://explorer.rootstock.io/' target='_blank'><img src='https://rootstock.blockscout.com/assets/network_logo.svg' height='23'></a></div><br>";
             outputsHtml += "<strong>Hash For Merged Mining:</strong> <div class='hash'>" + rskBlockData + "</div>";
-            // outputsHtml += "<div class='asciidata'>OP_RETURN " + rskDataAscii + "</div>";
             outputsHtml += "<div class='type-tag' onclick='openMergedMiningPopup()'>merged mining <div class='help-icon'></div></div>";
             outputsHtml += "</div>";
           }
 
           // Vcash data
-          // Spec: 
           if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("b9e11b6d")) {
-
             outputsHtml += "<div class='section-container'>";
             outputsHtml += "<strong>VCASH</strong><br>";
             outputsHtml += "</div>";
@@ -332,8 +352,21 @@
         }
       }
       
-      document.getElementById("blocks").innerHTML = blocksHtml;
-      currentBlockIndex += numBlocks;
+      return blocksHtml;
+    };
+
+    const isScrolledToBottom = () => {
+      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+      const clientHeight = document.documentElement.clientHeight || window.innerHeight;
+      
+      return scrollTop + clientHeight >= scrollHeight;
+    };
+
+    window.onscroll = async () => {
+      if (isScrolledToBottom()) {
+        await loadMoreBlocks();
+      }
     };
 
     const hexToAscii = (hex) => {
@@ -351,10 +384,6 @@
     function closeMergedMiningPopup() {
       document.getElementById("mergedMiningPopup").style.display = "none";
     }
-    
-    const init = async () => {
-      await loadMoreBlocks();
-    };
     
     init();
   </script>
