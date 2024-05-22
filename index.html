@@ -48,20 +48,20 @@
     }
 
     .block {
-      margin-bottom: 40px;
+      margin-bottom: 25px;
       padding: 10px;
-      background-color: #4b4b4b;
+      background-color: #444;
       position: relative;
     }
 
     .block::before {
       content: "";
-      width: 30px;
+      width: 15px;
       height: 100%;
       position: absolute;
       top: 0;
-      left: -30px;
-      background-color: #191c27;
+      left: -15px;
+      background-color: #30333e;
       transform: skewY(45deg);
       transform-origin: top right;
     }
@@ -69,11 +69,11 @@
     .block::after {
       content: "";
       width: 100%;
-      height: 30px;
+      height: 15px;
       position: absolute;
-      top: -30px;
+      top: -15px;
       left: 0;
-      background-color: #232838;
+      background-color: #50535e;
       transform: skewX(45deg);
       transform-origin: bottom left;
     }
@@ -92,6 +92,13 @@
     .blockheight a {
       color: #f5f5f5;
       text-decoration: none;
+    }
+
+    .blockage {
+      font-style: italic;
+      font-size: medium;
+      color: aliceblue;
+      color: #959595;
     }
 
     #blocks {
@@ -121,9 +128,8 @@
     .section-container {
       margin-top: 10px;
       padding: 16px;
-      border: 1px solid #e6e6e6;
       color: #434343;
-      border-radius: 5px;
+      border-radius: 3px;
       background-color: #fff;
       position: relative;
     }
@@ -386,6 +392,9 @@
         var txResponse = await fetch(`https://mempool.space/api/tx/${coinbaseTxId}`);
         var txData = await txResponse.json();
 
+        var blockAgeInMinutes = Math.round((Date.now() / 1000 - block.timestamp) / 60);
+        var blockAgeText = `${blockAgeInMinutes} min${blockAgeInMinutes !== 1 ? 's' : ''} ago`;
+
         var outputsHtml = "";
         for (var j = 0; j < txData.vout.length; j++) {
           var output = txData.vout[j];
@@ -477,15 +486,13 @@
           }
         }
 
-        if (outputsHtml !== "") {
-          blocksHtml += "<div class='block'>";
-          blocksHtml += "<div class='block-body'>";
-          blocksHtml += "<div class='blockheight'><a href='https://mempool.space/block/" + block.id + "' target='_blank'>" + block.height + "</a></div>";
-          blocksHtml += "<div class='pool'>" + poolName + "</div>";
-          blocksHtml += outputsHtml;
-          blocksHtml += "</div>";
-          blocksHtml += "</div>";
-        }
+        blocksHtml += "<div class='block'>";
+        blocksHtml += "<div class='block-body'>";
+        blocksHtml += "<div class='blockheight'><a href='https://mempool.space/block/" + block.id + "' target='_blank'>" + block.height + "</a> <span class='blockage'>(" + blockAgeText + ")</span></div>";
+        blocksHtml += "<div class='pool'>" + poolName + "</div>";
+        blocksHtml += outputsHtml;
+        blocksHtml += "</div>";
+        blocksHtml += "</div>";
       }
 
       return blocksHtml;
