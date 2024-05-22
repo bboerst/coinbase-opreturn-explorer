@@ -19,8 +19,6 @@ In this case, you see 3 `OP_RETURN` outputs:
 
 These _look_ like a bunch of gibberish because it's typical in block explorers to convert the actual script (stored in hex) into ASCII to make it readable by humans. But each of these `OP_RETURN`s actually _mean something_ and they typically follow a spec and they can be decoded into something that makes sense rather than ASCII text.
 
-Go back to the mempool.space coinbase transaction page from above and click the "Details" button. Find the same 3 `OP_RETURN` outputs on the right and look at the `ScriptPubKey (HEX)` field. This is the actual script that the miner adds to the transaction that contains the data and this is what we decode in this project.
-
 Here are the the decoded `OP_RETURN`s from the above transaction.
 
 <img width="412" alt="image" src="https://github.com/bboerst/coinbase-opreturn-explorer/assets/1393271/abf9bfd3-440d-4d2e-8465-e0e1c4a3d35a">
