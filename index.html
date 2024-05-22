@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>coinbase tx OP_RETURN explorer</title>
   <style>
@@ -9,12 +10,9 @@
       background-color: #000000;
       color: #fff;
     }
-    
+
     .container {
       margin: 0 auto;
-      padding: 20px;
-      background-color: #24273e;
-      border-radius: 10px;
       width: fit-content;
       position: relative;
     }
@@ -43,14 +41,41 @@
       width: 24px;
       height: 24px;
     }
-    
+
+    :root {
+      --block-size: 200px;
+      /* Adjust the size as needed */
+    }
+
     .block {
-      margin-bottom: 20px;
+      margin-bottom: 40px;
       padding: 10px;
       background-color: #4b4b4b;
-      border-radius: 5px;
-      border: 2px solid #686868;
       position: relative;
+    }
+
+    .block::before {
+      content: "";
+      width: 30px;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: -30px;
+      background-color: #191c27;
+      transform: skewY(45deg);
+      transform-origin: top right;
+    }
+
+    .block::after {
+      content: "";
+      width: 100%;
+      height: 30px;
+      position: absolute;
+      top: -30px;
+      left: 0;
+      background-color: #232838;
+      transform: skewX(45deg);
+      transform-origin: bottom left;
     }
 
     .block h3 {
@@ -67,6 +92,10 @@
     .blockheight a {
       color: #f5f5f5;
       text-decoration: none;
+    }
+
+    #blocks {
+      margin-top: 45px;
     }
 
     .pagination {
@@ -102,6 +131,14 @@
     .section-container a {
       color: #5b84e6;
       text-decoration: none;
+    }
+
+    .title {
+      font-size: 24px;
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-family: monospace;
     }
 
     .data {
@@ -230,27 +267,67 @@
       background-size: cover;
       cursor: pointer;
     }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
-    <div class="github-logo">
+
+    <!-- <div class="github-logo">
       <a href="https://github.com/bboerst/merged-mining-explorer" target="_blank">
         <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo">
       </a>
-    </div>
-    <h1><div class='data'>coinbase tx OP_RETURNs (decoded)</div></h1>
-    <p class="whatisthis"><a href='https://github.com/bboerst/coinbase-opreturn-explorer/blob/main/README.md' target="_blank">what is this?</a></p>
+    </div> -->
+
+    <h1>
+      <div class="title">coinbase tx OP_RETURNs (decoded)</div>
+    </h1>
+    <p class="whatisthis"><a href='https://github.com/bboerst/coinbase-opreturn-explorer/blob/main/README.md'
+        target="_blank">what is this?</a></p>
     <div id="blocks"></div>
+
+    <div class="loading">
+      <div class="loading-spinner"></div>
+    </div>
   </div>
 
   <div id="mergedMiningPopup" class="popup">
     <div class="popup-content">
       <span class="close" onclick="closeMergedMiningPopup()">&times;</span>
       <h2>What is Merged Mining?</h2>
-      <p>Merged mining, also known as Auxiliary Proof-of-Work (AuxPoW), allows multiple cryptocurrencies to be mined simultaneously. It enables a miner to use their computational power to secure multiple blockchains without dividing their hashrate.</p>
-      <p>In merged mining, the work done on the parent blockchain (e.g., Bitcoin) is also used to validate transactions and create blocks on the auxiliary blockchain (e.g., CORE).</p>
-      <p>Merged mining is implemented by embedding metadata from the auxiliary blockchain into the coinbase transaction of the parent blockchain's blocks. This metadata typically includes block hashes and other relevant information.</p>
+      <p>Merged mining, also known as Auxiliary Proof-of-Work (AuxPoW), allows multiple cryptocurrencies to be mined
+        simultaneously. It enables a miner to use their computational power to secure multiple blockchains without
+        dividing their hashrate.</p>
+      <p>In merged mining, the work done on the parent blockchain (e.g., Bitcoin) is also used to validate transactions
+        and create blocks on the auxiliary blockchain (e.g., CORE).</p>
+      <p>Merged mining is implemented by embedding metadata from the auxiliary blockchain into the coinbase transaction
+        of the parent blockchain's blocks. This metadata typically includes block hashes and other relevant information.
+      </p>
     </div>
   </div>
 
@@ -261,7 +338,7 @@
       <p>The merkle root for the witness data is in an OP_RETURN output.</p>
     </div>
   </div>
-  
+
   <script>
     let currentBlockIndex = 0;
 
@@ -269,42 +346,46 @@
       var tipResponse = await fetch("https://mempool.space/api/blocks/tip/height");
       var tipHeight = await tipResponse.text();
       currentBlockIndex = parseInt(tipHeight);
-      
+
       await loadMoreBlocks();
     };
-    
+
     const loadMoreBlocks = async () => {
+      document.querySelector('.loading').style.display = 'block';
+
       const blocks = document.querySelectorAll(".block");
       const lastBlock = blocks[blocks.length - 1];
-      
+
       if (lastBlock) {
         const lastBlockHeight = parseInt(lastBlock.querySelector(".blockheight a").textContent);
         currentBlockIndex = lastBlockHeight - 1;
       }
-      
+
       var response = await fetch(`https://mempool.space/api/v1/blocks/${currentBlockIndex}`);
       var newBlocks = await response.json();
-      
+
       var blocksHtml = await renderBlocks(newBlocks);
-      
+
       document.getElementById("blocks").innerHTML += blocksHtml;
       currentBlockIndex -= newBlocks.length;
+
+      document.querySelector('.loading').style.display = 'none';
     };
 
     const renderBlocks = async (blocks) => {
       var blocksHtml = "";
-      
+
       for (var i = 0; i < blocks.length; i++) {
         var block = blocks[i];
-        
+
         var poolName = block.extras.pool ? block.extras.pool.name : "Unknown";
-        
+
         var coinbaseTxIdResponse = await fetch(`https://mempool.space/api/block/${block.id}/txid/0`);
         var coinbaseTxId = await coinbaseTxIdResponse.text();
-        
+
         var txResponse = await fetch(`https://mempool.space/api/tx/${coinbaseTxId}`);
         var txData = await txResponse.json();
-        
+
         var outputsHtml = "";
         for (var j = 0; j < txData.vout.length; j++) {
           var output = txData.vout[j];
@@ -318,7 +399,7 @@
                 var opReturnData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_45 ")[1];
                 var validatorAddress = "0x" + opReturnData.slice(10, 50);
                 var rewardAddress = "0x" + opReturnData.slice(50);
-                
+
                 outputsHtml += "<div class='section-container'>";
                 outputsHtml += "<div class='core-logo'><a href='https://stake.coredao.org/' target='_blank'><img src='https://coredao.org/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flight.2e337d5a.png&w=384&q=75' height='30'></a></div><br>";
                 outputsHtml += "<strong>Validator Address:</strong> <div class='hash'><a href='https://stake.coredao.org/validator/" + validatorAddress + "' target='_blank'>" + validatorAddress + "</a></div><br>";
@@ -327,7 +408,7 @@
                 // outputsHtml += "<div class='tag opreturnindex'>OP_RETURN " + j + "</div>";
                 outputsHtml += "</div>";
                 break;
-              
+
               // RSK data - merged mining
               case output.scriptpubkey_asm.includes("52534b424c4f434b3a"):
                 if (output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_41 52534b424c4f434b3a")) {
@@ -343,7 +424,7 @@
                 }
 
                 var rskBlockData = "0x" + rskData.slice(18, 82);
-                
+
                 outputsHtml += "<div class='section-container'>";
                 outputsHtml += "<div class='rootstock-logo'><a href='https://explorer.rootstock.io/' target='_blank'><img src='https://rootstock.blockscout.com/assets/network_logo.svg' height='23'></a></div><br>";
                 outputsHtml += "<strong>Hash For Merged Mining:</strong> <div class='hash'>" + rskBlockData + "</div>";
@@ -356,20 +437,21 @@
               case output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_36 aa21a9ed"):
                 var witnessData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_36 ")[1];
                 var witnessBlockData = witnessData.slice(8, 72);
-                
-                outputsHtml += "<div class='section-container'>";
-                outputsHtml += "<div class='segwit-logo'><img src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Segwit.svg/320px-Segwit.svg.png' height='30'></div><br>";
-                outputsHtml += "<strong>Witness data merkle root:</strong> <div class='hash'>" + witnessBlockData + "</div>";
-                outputsHtml += "<div class='tag type' onclick='openWitnessPopup()'>witness <div class='help-icon'></div></div>";
-                // outputsHtml += "<div class='tag opreturnindex'>OP_RETURN " + j + "</div>";
-                outputsHtml += "</div>";
+
+                // Hiding witness data for now
+                // outputsHtml += "<div class='section-container'>";
+                // outputsHtml += "<div class='segwit-logo'><img src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Segwit.svg/320px-Segwit.svg.png' height='30'></div><br>";
+                // outputsHtml += "<strong>Witness data merkle root:</strong> <div class='hash'>" + witnessBlockData + "</div>";
+                // outputsHtml += "<div class='tag type' onclick='openWitnessPopup()'>witness <div class='help-icon'></div></div>";
+                // // outputsHtml += "<div class='tag opreturnindex'>OP_RETURN " + j + "</div>";
+                // outputsHtml += "</div>";
                 break;
 
               // HathorNetwork
               case output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_36 48617468"):
                 var hathorData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_36 ")[1];
                 var hathorBlockData = hathorData.slice(8, 72);
-                
+
                 outputsHtml += "<div class='section-container'>";
                 outputsHtml += "<div class='hathor-logo'><a href='https://hathor.network/' target='_blank'><img src='https://hathor.network/wp-content/uploads/2023/04/Vector-24.svg' height='20'></a></div><br>";
                 outputsHtml += "<strong>Aux block hash:</strong> <div class='hash'>" + hathorBlockData + "</div>";
@@ -394,16 +476,18 @@
 
           }
         }
-        
+
         if (outputsHtml !== "") {
           blocksHtml += "<div class='block'>";
+          blocksHtml += "<div class='block-body'>";
           blocksHtml += "<div class='blockheight'><a href='https://mempool.space/block/" + block.id + "' target='_blank'>" + block.height + "</a></div>";
           blocksHtml += "<div class='pool'>" + poolName + "</div>";
           blocksHtml += outputsHtml;
           blocksHtml += "</div>";
+          blocksHtml += "</div>";
         }
       }
-      
+
       return blocksHtml;
     };
 
@@ -444,8 +528,9 @@
     function closeWitnessPopup() {
       document.getElementById("witnessPopup").style.display = "none";
     }
-    
+
     init();
   </script>
 </body>
+
 </html>
