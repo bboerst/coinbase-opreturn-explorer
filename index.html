@@ -97,7 +97,6 @@
     .blockage {
       font-style: italic;
       font-size: medium;
-      color: aliceblue;
       color: #959595;
     }
 
@@ -277,7 +276,11 @@
     .loading {
       display: none;
       text-align: center;
-      margin-top: 20px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 50px;
     }
 
     .loading-spinner {
@@ -287,6 +290,7 @@
       width: 30px;
       height: 30px;
       animation: spin 2s linear infinite;
+      margin: 0 auto;
     }
 
     @keyframes spin {
@@ -393,7 +397,13 @@
         var txData = await txResponse.json();
 
         var blockAgeInMinutes = Math.round((Date.now() / 1000 - block.timestamp) / 60);
-        var blockAgeText = `${blockAgeInMinutes} min${blockAgeInMinutes !== 1 ? 's' : ''} ago`;
+        var blockAgeText;
+        if (blockAgeInMinutes > 90) {
+          var blockAgeInHours = Math.round(blockAgeInMinutes / 60);
+          blockAgeText = `${blockAgeInHours} hour${blockAgeInHours !== 1 ? 's' : ''} ago`;
+        } else {
+          blockAgeText = `${blockAgeInMinutes} min${blockAgeInMinutes !== 1 ? 's' : ''} ago`;
+        }
 
         var outputsHtml = "";
         for (var j = 0; j < txData.vout.length; j++) {
