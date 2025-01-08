@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>coinbase tx OP_RETURN explorer</title>
   <style>
@@ -10,24 +9,20 @@
       background-color: #000000;
       color: #fff;
     }
-
     .container {
       margin: 0 auto;
       width: fit-content;
       position: relative;
     }
-
     .whatisthis {
       text-align: right;
       margin-top: 0px;
     }
-
     .whatisthis a {
       color: #5e666f;
       text-decoration: none;
       font-style: italic;
     }
-
     .github-logo {
       position: absolute;
       top: 19px;
@@ -36,24 +31,19 @@
       padding: 10px 15px;
       border-radius: 0px 5px 5px 0px;
     }
-
     .github-logo img {
       width: 24px;
       height: 24px;
     }
-
     :root {
       --block-size: 200px;
-      /* Adjust the size as needed */
     }
-
     .block {
       margin-bottom: 25px;
       padding: 10px;
       background-color: #444;
       position: relative;
     }
-
     .block::before {
       content: "";
       width: 15px;
@@ -65,7 +55,6 @@
       transform: skewY(45deg);
       transform-origin: top right;
     }
-
     .block::after {
       content: "";
       width: 100%;
@@ -77,39 +66,32 @@
       transform: skewX(45deg);
       transform-origin: bottom left;
     }
-
     .block h3 {
       margin-bottom: 0px;
       margin-top: 6px;
     }
-
     .blockheight {
       font-size: x-large;
       font-weight: bold;
       margin-bottom: 10px;
     }
-
     .blockheight a {
       color: #f5f5f5;
       text-decoration: none;
     }
-
     .blockage {
       font-style: italic;
       font-size: medium;
       color: #959595;
     }
-
     #blocks {
       margin-top: 45px;
     }
-
     .pagination {
       display: flex;
       justify-content: space-between;
       margin-top: 20px;
     }
-
     .pagination a {
       display: inline-block;
       padding: 10px;
@@ -119,11 +101,9 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
     .pagination a:hover {
       background-color: #1976D2;
     }
-
     .section-container {
       margin-top: 10px;
       padding: 16px;
@@ -132,12 +112,10 @@
       background-color: #fff;
       position: relative;
     }
-
     .section-container a {
       color: #5b84e6;
       text-decoration: none;
     }
-
     .title {
       font-size: 24px;
       text-align: center;
@@ -145,7 +123,6 @@
       margin-bottom: 10px;
       font-family: monospace;
     }
-
     .data {
       background-color: #4b4b4b;
       padding: 18px;
@@ -155,15 +132,12 @@
       white-space: pre-wrap;
       word-wrap: break-word;
     }
-
     h1 div.data {
       text-align: center;
     }
-
     .hash {
       font-family: monospace;
     }
-
     .pool {
       position: absolute;
       top: 12px;
@@ -171,7 +145,6 @@
       font-weight: bold;
       font-size: x-large;
     }
-
     .popup {
       display: none;
       position: fixed;
@@ -183,7 +156,6 @@
       overflow: auto;
       background-color: rgba(0, 0, 0, 0.4);
     }
-
     .popup-content {
       background-color: #fefefe;
       margin: 15% auto;
@@ -195,7 +167,6 @@
       box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
       color: #333;
     }
-
     .close {
       color: #aaa;
       float: right;
@@ -203,14 +174,12 @@
       font-weight: bold;
       cursor: pointer;
     }
-
     .close:hover,
     .close:focus {
       color: black;
       text-decoration: none;
       cursor: pointer;
     }
-
     h5.whatismergedmining {
       text-align: right;
       cursor: pointer;
@@ -218,31 +187,30 @@
       color: #5e666f;
       font-style: italic;
     }
-
     .core-logo {
       padding-top: 4px;
     }
-
     .rootstock-logo {
       padding-top: 4px;
     }
-
     .hathor-logo {
       background: black;
       width: 90px;
       padding: 8px 5px 5px 5px;
     }
-
+    .exsat-logo {
+      background: black;
+      width: 100px;
+      padding: 8px 5px 5px 5px;
+    }
     .segwit-logo {
       padding-top: 4px;
     }
-
     .nologo {
       padding-top: 4px;
       font-weight: bold;
       font-size: larger;
     }
-
     .tag {
       position: absolute;
       right: 10px;
@@ -253,15 +221,12 @@
       font-size: 14px;
       cursor: pointer;
     }
-
     .tag.type {
       top: 10px;
     }
-
     .tag.opreturnindex {
       top: 38px;
     }
-
     .help-icon {
       display: inline-block;
       width: 12px;
@@ -272,7 +237,6 @@
       background-size: cover;
       cursor: pointer;
     }
-
     .loading {
       display: none;
       text-align: center;
@@ -282,7 +246,6 @@
       align-items: center;
       height: 50px;
     }
-
     .loading-spinner {
       border: 4px solid #f3f3f3;
       border-top: 4px solid #3498db;
@@ -292,35 +255,21 @@
       animation: spin 2s linear infinite;
       margin: 0 auto;
     }
-
     @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-
-      100% {
-        transform: rotate(360deg);
-      }
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
-
 <body>
   <div class="container">
-
-    <!-- <div class="github-logo">
-      <a href="https://github.com/bboerst/merged-mining-explorer" target="_blank">
-        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo">
-      </a>
-    </div> -->
-
     <h1>
       <div class="title">coinbase tx OP_RETURNs (decoded)</div>
     </h1>
-    <p class="whatisthis"><a href='https://github.com/bboerst/coinbase-opreturn-explorer/blob/main/README.md'
-        target="_blank">what is this?</a></p>
+    <p class="whatisthis">
+      <a href='https://github.com/bboerst/coinbase-opreturn-explorer/blob/main/README.md' target="_blank">what is this?</a>
+    </p>
     <div id="blocks"></div>
-
     <div class="loading">
       <div class="loading-spinner"></div>
     </div>
@@ -375,10 +324,9 @@
       var newBlocks = await response.json();
 
       var blocksHtml = await renderBlocks(newBlocks);
-
       document.getElementById("blocks").innerHTML += blocksHtml;
-      currentBlockIndex -= newBlocks.length;
 
+      currentBlockIndex -= newBlocks.length;
       document.querySelector('.loading').style.display = 'none';
     };
 
@@ -387,7 +335,6 @@
 
       for (var i = 0; i < blocks.length; i++) {
         var block = blocks[i];
-
         var poolName = block.extras.pool ? block.extras.pool.name : "Unknown";
 
         var coinbaseTxIdResponse = await fetch(`https://mempool.space/api/block/${block.id}/txid/0`);
@@ -412,7 +359,6 @@
           if (output.scriptpubkey && output.scriptpubkey_asm && output.scriptpubkey_asm.includes("OP_RETURN")) {
 
             switch (true) {
-
               // Core data - merged mining
               case output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_45 434f5245"):
                 var opReturnData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_45 ")[1];
@@ -430,18 +376,18 @@
 
               // RSK data - merged mining
               case output.scriptpubkey_asm.includes("52534b424c4f434b3a"):
+                let rskData;
                 if (output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_41 52534b424c4f434b3a")) {
-                  var rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_41 ")[1];
+                  rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_41 ")[1];
                 } else if (output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_1 52534b424c4f434b3a")) {
-                  var rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_1 ")[1];
+                  rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_1 ")[1];
                 } else if (output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHDATA41 52534b424c4f434b3a")) {
-                  var rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHDATA41 ")[1];
+                  rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHDATA41 ")[1];
                 } else if (output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHDATA1 52534b424c4f434b3a")) {
-                  var rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHDATA1 ")[1];
+                  rskData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHDATA1 ")[1];
                 } else {
-                  var rskData = output.scriptpubkey_asm;
+                  rskData = output.scriptpubkey_asm;
                 }
-
                 var rskBlockData = "0x" + rskData.slice(18, 82);
 
                 outputsHtml += "<div class='section-container'>";
@@ -454,6 +400,7 @@
 
               // Witness data
               case output.scriptpubkey_asm.includes("OP_RETURN OP_PUSHBYTES_36 aa21a9ed"):
+                // (Hide witness data for now)
                 var witnessData = output.scriptpubkey_asm.split("OP_RETURN OP_PUSHBYTES_36 ")[1];
                 var witnessBlockData = witnessData.slice(8, 72);
 
@@ -479,20 +426,63 @@
                 outputsHtml += "</div>";
                 break;
 
+              // exSatNetwork (newly updated)
+              case output.scriptpubkey.includes("4558534154"):
+                var exsatData = output.scriptpubkey.slice(4, output.length) || "";
+                // exsatData should start with "4558534154" ("EXSAT" in hex), then "01" for version,
+                // then the custom-encoded signer address bytes.
+
+                // Example layout:  [EXSAT (5 bytes)] [version (1 byte)] [encoded signer address...]
+                // exsatData[0..9]   => "4558534154"  = "EXSAT"
+                // exsatData[10..11] => version byte  (e.g. "01")
+                // exsatData[12.. ]  => custom-encoded address
+
+                let versionHex = exsatData.slice(10, 12);
+                let version = parseInt(versionHex, 16);
+                let addressHex = exsatData.slice(12);
+
+                // A simple JS version of the customDecode function:
+                function customDecodeExsat(bufferHex) {
+                  const encodingMap = [
+                    'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p',
+                    'q','r','s','t','u','v','w','x','y','z','1','2','3','4','5','.'
+                  ];
+                  let result = '';
+                  for (let i = 0; i < bufferHex.length; i += 2) {
+                    const byteVal = parseInt(bufferHex.substring(i, i + 2), 16);
+                    if (byteVal >= 0 && byteVal < encodingMap.length) {
+                      result += encodingMap[byteVal];
+                    } else {
+                      result += '?';
+                    }
+                  }
+                  return result;
+                }
+
+                let exsatSignerAddress = customDecodeExsat(addressHex);
+
+                outputsHtml += "<div class='section-container'>";
+                outputsHtml += "<div class='exsat-logo'><a href='https://exsat.network/' target='_blank'><img src='https://exsat.network/assets/logo-C0jHhT2K.svg' height='20'></a></div><br>";
+                // outputsHtml += "<strong>Version:</strong> <div class='hash'>" + version + "</div>";
+                outputsHtml += "<strong>Signer address:</strong> <div class='hash'>" + exsatSignerAddress + "</div>";
+                outputsHtml += "<div class='tag type' onclick='openMergedMiningPopup()'>merged mining <div class='help-icon'></div></div>";
+                outputsHtml += "</div>";
+                break;
+
+              // VCASH
               case output.scriptpubkey_asm.includes("b9e11b6d"):
                 outputsHtml += "<div class='section-container'>";
                 outputsHtml += "<strong>VCASH</strong><br>";
                 outputsHtml += "</div>";
                 break;
 
+              // Unknown OP_RETURN
               default:
                 outputsHtml += "<div class='section-container'>";
                 outputsHtml += "<strong>UNKNOWN OP_RETURN</strong><br>";
                 outputsHtml += "<strong>ScriptPubKey (HEX):</strong> <div class='hash'>" + output.scriptpubkey + "</div>";
                 outputsHtml += "</div>";
-
             }
-
           }
         }
 
@@ -512,7 +502,6 @@
       const scrollTop = window.scrollY;
       const scrollHeight = document.documentElement.scrollHeight;
       const clientHeight = window.innerHeight;
-
       return scrollTop + clientHeight >= scrollHeight - 1;
     };
 
@@ -549,5 +538,4 @@
     init();
   </script>
 </body>
-
 </html>
