@@ -49,6 +49,11 @@ If anyone can explain this, please open a PR with details.
 - Link: https://hathor.network/
 - Spec: https://github.com/HathorNetwork/rfcs/blob/master/text/0006-merged-mining-with-bitcoin.md
 
+### exSat
+- Link: https://exsat.network/
+- Spec: https://docs.exsat.network/guides-of-data-consensus/others/operation-references/synchronizer-operations/synchronizer-registration#register-on-chain-via-op_return
+
+
 #### Summary
 If anyone can explain this, please open a PR with details.
 
